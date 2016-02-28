@@ -1,0 +1,93 @@
+#!/bin/bash
+set -e
+
+# Export env vars
+export AWESOME_HOME="$HOME/.config/awesome"
+export AWESOME_THEME_REPO="https://github.com/copycat-killer/awesome-copycats.git"
+
+### Options
+opt=$1
+
+usage() {
+  echo "usage: $0 [install|update|remove]"
+  exit 1
+}
+
+function check_awesome (){
+  if [ -d "$AWESOME_HOME" ]
+  then
+    export awesome=true
+  else
+    export awesome=false
+  fi
+}
+
+function install_awesome(){
+  if [ "$awesome" == true ]
+  then
+    echo "Awesome themes are already installed!"
+    exit 0
+  else
+    echo "Installing awesome themes"
+    mkdir $AWESOME_HOME
+    cd $AWESOME_HOME
+    git clone --recursive $AWESOME_THEME_REPO .
+    exit 0
+  fi
+}
+
+function update_awesome(){
+  cd $AWESOME_HOME && \
+  git pull -r > /dev/null
+  echo "Awesome themes updated!"
+}
+
+function remove_awesome(){
+
+echo "Are you sure Yes\No?"
+action=$1
+
+read action
+shopt -s nocasematch
+
+case $action in
+  Yes|Y)
+    echo $AWESOME_HOME
+    if [[ ! -z "$AWESOME_HOME" ]] && [[ -d "$AWESOME_HOME" ]]
+    then
+      mv $AWESOME_HOME /tmp && \
+      cd /tmp && \
+      rm -rf awesome
+      echo -n "Awesome themes removed!"
+      exit 0
+    else
+      echo -n "AWESOME_HOME var is empty!Aborting.."
+      exit 1
+    fi
+  ;;
+  No|N)
+      echo -n "Canceled!"
+      exit 0
+  ;;
+  *)
+    echo -n "Type Yes or No..."
+    exit 1
+  ;;
+esac
+}
+
+case $opt in
+  install)
+    check_awesome
+    install_awesome
+  ;;
+  update)
+    update_awesome
+  ;;
+  remove)
+    remove_awesome
+  ;;
+  *)
+    usage
+  ;;
+esac

@@ -10,11 +10,10 @@ then
     usage
 fi
 
+git filter-branch --env-filter '
 OLD_EMAIL="$1"
 CORRECT_NAME="$2"
 CORRECT_EMAIL="$3"
-
-git filter-branch --env-filter '
 
 if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
 then

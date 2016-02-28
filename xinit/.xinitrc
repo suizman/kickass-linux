@@ -7,7 +7,13 @@
 #
 
 default_session=awesome
-/etc/profile.d/local.sh
+/etc/profile.d/locale.sh
+
+# Enable xcreensaver
+if [ -f /bin/xscreensaver ]
+then 
+  xscreensaver -nosplash &
+fi
 
 case $1 in
   kde)
